@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Background Remover — Free AI Background Eraser, Private | S3eidat Tools</title>
+<meta name="description" content="Remove the background from photos for free. The AI (U²-Net) runs on your device: no upload, no sign-up, no watermark. Refine brush, colour, blur or custom backgrounds, full-resolution PNG/WebP, batch zip.">
+<meta property="og:title" content="Background Remover — free, private, runs on your device">
+<meta property="og:description" content="Cut out people, products and pets with an AI that runs in your browser. Nothing is uploaded.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/bg-remover/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/bg-remover/">
+<meta property="og:image" content="https://s3eidat.github.io/bg-remover/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Background Remover — Remove image backgrounds free, on your device">
+<meta name="twitter:description" content="Remove image backgrounds free, on your device. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/bg-remover/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Background Remover", "url": "https://s3eidat.github.io/bg-remover/", "description": "Remove image backgrounds free, on your device. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/bg-remover/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="bg-remover">
+<main class="s3-main">
+  <section class="s3-hero">
+    <h1>Background Remover</h1>
+    <p>Cut people, products and pets out of photos. Free, no sign-up, no watermark, and the AI runs on your device: your photos are never uploaded.</p>
+  </section>
+
+  <div class="bg-grid">
+    <section class="card stack bg-main">
+      <div class="row bg-bar">
+        <div class="seg" id="mode" role="group" aria-label="Tool">
+          <button aria-pressed="true" data-v="compare" title="Drag to compare before and after (C)">Compare</button>
+          <button aria-pressed="false" data-v="erase" title="Brush away leftover background (E)">Erase</button>
+          <button aria-pressed="false" data-v="restore" title="Brush back parts of the subject (R)">Restore</button>
+        </div>
+        <label class="field bg-mini"><span class="row between"><span>Brush</span><output id="brushV" class="mono">40 px</output></span>
+          <input type="range" id="brush" min="4" max="200" step="1" value="40"></label>
+        <label class="field bg-mini"><span class="row between"><span>Soft edge</span><output id="softV" class="mono">50%</output></span>
+          <input type="range" id="soft" min="0" max="100" step="1" value="50"></label>
+        <span class="grow"></span>
+        <button class="btn ghost small icon" id="undo" title="Undo brush stroke (Ctrl+Z)" aria-label="Undo brush stroke" disabled><svg class="i"><use href="#i-refresh"/></svg></button>
+        <button class="btn ghost small" id="reset" title="Remove all brush edits on this image" disabled><svg class="i"><use href="#i-x"/></svg>Reset</button>
+      </div>
+
+      <div class="bg-stage checker" id="stageWrap">
+        <canvas id="stage" tabindex="0" aria-label="Result. In Compare mode drag left or right to compare; in Erase or Restore mode paint on the image. Arrow keys move the compare line."></canvas>
+        <div class="bg-cursor" id="cursor" hidden></div>
+        <div class="bg-busy" id="busy" hidden>
+          <div class="bg-scan"></div>
+          <div class="bg-busy-card" role="status" aria-live="polite">
+            <b id="busyText">Removing background…</b>
+            <div class="bg-prog"><i id="busyBar"></i></div>
+            <span class="faint" id="busySub"></span>
+          </div>
+        </div>
+        <div class="bg-empty" id="empty">
+          <label class="drop" id="drop">
+            <input type="file" accept="image/*" multiple hidden>
+            <svg class="i"><use href="#i-image"/></svg>
+            <b>Drop photos here</b>
+            <span class="faint">or click to choose · paste works too · JPG, PNG, WebP · many at once</span>
+          </label>
+          <button class="btn small" id="sample" type="button"><svg class="i"><use href="#i-play"/></svg>No photo handy? Try a sample</button>
+        </div>
+      </div>
+
+      <div class="row bg-under">
+        <label class="check" id="ghostWrap"><input type="checkbox" id="ghost" checked> Show removed parts while brushing</label>
+        <span class="faint bg-meta" id="meta"></span>
+        <span class="grow"></span>
+        <label class="btn ghost small" id="add"><svg class="i"><use href="#i-plus"/></svg>Add images<input type="file" accept="image/*" multiple hidden></label>
+      </div>
+      <ul class="bg-list" id="list" hidden aria-label="Images"></ul>
+    </section>
+
+    <aside class="card stack bg-side">
+      <div class="stack bg-sec">
+        <h2>Cut-out</h2>
+        <label class="field"><span class="row between"><span>Threshold</span><output id="thresholdV" class="mono">50</output></span>
+          <input type="range" id="threshold" min="5" max="95" step="1" value="50"></label>
+        <label class="field"><span class="row between"><span>Edge shift</span><output id="shiftV" class="mono">0 px</output></span>
+          <input type="range" id="shift" min="-20" max="20" step="1" value="0"></label>
+        <label class="field"><span class="row between"><span>Feather</span><output id="featherV" class="mono">1 px</output></span>
+          <input type="range" id="feather" min="0" max="20" step="1" value="1"></label>
+        <label class="check"><input type="checkbox" id="smart" checked> Smart edges (snap to the photo's edges)</label>
+      </div>
+
+      <div class="stack bg-sec">
+        <h2>Background</h2>
+        <div class="seg" id="bg" role="group" aria-label="Background">
+          <button aria-pressed="true" data-v="none">None</button>
+          <button aria-pressed="false" data-v="color">Colour</button>
+          <button aria-pressed="false" data-v="blur">Blur</button>
+          <button aria-pressed="false" data-v="image">Image</button>
+        </div>
+        <div class="row bg-swatches" id="colorRow" hidden>
+          <div class="row" id="swatches" role="group" aria-label="Colour presets"></div>
+          <label class="bg-pick" title="Pick any colour"><span class="sr">Background colour</span><input type="color" id="color" value="#ffffff"></label>
+        </div>
+        <label class="field" id="blurRow" hidden><span class="row between"><span>Blur strength</span><output id="blurV" class="mono">50</output></span>
+          <input type="range" id="blur" min="5" max="100" step="1" value="50"></label>
+        <div class="row" id="imageRow" hidden>
+          <label class="btn small" id="bgPick"><svg class="i"><use href="#i-upload"/></svg>Choose background<input type="file" accept="image/*" hidden></label>
+          <span class="faint bg-meta" id="bgName">No image chosen</span>
+        </div>
+      </div>
+
+      <div class="stack bg-sec">
+        <h2>Export <small id="outSize"></small></h2>
+        <div class="seg" id="fmt" role="group" aria-label="Format">
+          <button aria-pressed="true" data-v="png">PNG</button>
+          <button aria-pressed="false" data-v="webp">WebP</button>
+        </div>
+        <button class="btn primary" id="save" disabled><svg class="i"><use href="#i-download"/></svg>Download</button>
+        <div class="row bg-row2">
+          <button class="btn small" id="copy" disabled><svg class="i"><use href="#i-copy"/></svg>Copy</button>
+          <button class="btn small" id="mask" disabled title="Black-and-white mask, for other editors"><svg class="i"><use href="#i-image"/></svg>Mask</button>
+          <button class="btn small" id="zip" disabled><svg class="i"><use href="#i-download"/></svg>All (.zip)</button>
+        </div>
+      </div>
+
+      <p class="faint bg-note"><b>Honest note:</b> this is a small AI model (U²-Net small) that works best on a clear subject: people, products, pets. Fine hair, fur, glass and smoke can come out rough; fix them with Erase and Restore. The first run downloads the AI engine and model (about 16 MB) from this site; after that it works offline. Your photos stay on your device.</p>
+    </aside>
+  </div>
+</main>
+<script src="lib/ort.wasm.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

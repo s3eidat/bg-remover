@@ -1,0 +1,62 @@
+.bg-grid { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 14px; align-items: start; }
+@media (max-width: 900px) { .bg-grid { grid-template-columns: minmax(0, 1fr); } }
+.bg-main { min-width: 0; }
+.bg-bar { gap: 10px 12px; }
+.bg-bar .btn.small { padding: 0 8px; }
+.bg-bar .btn.icon { width: 30px; }
+.bg-mini { min-width: 100px; max-width: 160px; flex: 1 1 100px; gap: 2px; }
+.bg-mini output, .bg-side output { color: var(--accent); font-weight: 600; }
+
+.bg-stage { position: relative; border-radius: 12px; border: 1px solid var(--line); min-height: 420px; display: grid; place-items: center; overflow: hidden; }
+.bg-stage.has-img { min-height: 0; }
+#stage { display: block; touch-action: none; cursor: ew-resize; max-width: 100%; }
+#stage.is-brush { cursor: none; }
+#stage.is-pan { touch-action: pan-y; }
+#stage:focus { outline: none; }
+#stage:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.bg-cursor { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.35); transform: translate(-50%, -50%); }
+.bg-cursor.erase { border-style: dashed; }
+
+.bg-empty { position: absolute; inset: 14px; display: grid; grid-template-rows: 1fr auto; gap: 10px; justify-items: center; }
+.bg-empty .drop { width: 100%; height: 100%; background: var(--surface); }
+.bg-empty .drop svg.i { width: 40px; height: 40px; }
+
+.bg-busy { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.bg-scan { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 0%, var(--accent-soft) 46%, rgba(61,214,208,.32) 50%, var(--accent-soft) 54%, transparent 100%); background-size: 100% 220%; animation: bg-scan 1.8s linear infinite; mix-blend-mode: screen; }
+@keyframes bg-scan { from { background-position: 0 110%; } to { background-position: 0 -110%; } }
+.bg-busy-card { position: relative; display: grid; gap: 8px; min-width: 230px; max-width: 86%; padding: 14px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line-strong); box-shadow: var(--shadow-pop); text-align: center; }
+.bg-busy-card b { font-size: 14px; }
+.bg-prog { height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; }
+.bg-prog i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width 160ms; }
+.bg-prog.indet i { width: 35% !important; animation: bg-ind 1.1s ease-in-out infinite; }
+@keyframes bg-ind { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+
+.bg-under { gap: 8px 12px; }
+.bg-meta { font-size: 12.5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.bg-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.bg-item { position: relative; display: grid; gap: 4px; padding: 6px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); cursor: pointer; min-width: 0; }
+.bg-item:hover { border-color: var(--line-strong); }
+.bg-item.is-sel { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.bg-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bg-thumb { width: 100%; aspect-ratio: 1; border-radius: 8px; display: block; object-fit: contain; }
+.bg-item .bg-name { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-2); }
+.bg-item .bg-st { position: absolute; top: 9px; left: 9px; font-size: 10.5px; padding: 1px 7px; }
+.bg-item .bg-rm { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; padding: 0; border-radius: 7px; background: var(--surface); }
+.bg-item .bg-rm svg.i { width: 13px; height: 13px; }
+
+.bg-side { min-width: 0; }
+.bg-sec + .bg-sec { padding-top: 14px; border-top: 1px solid var(--line); }
+.bg-sec h2 { margin: 0; }
+.bg-sec .seg { display: flex; }
+.bg-sec .seg button { flex: 1; }
+.bg-swatches { gap: 8px; }
+#swatches { gap: 6px; }
+.bg-sw { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 2px rgba(0,0,0,.08); }
+.bg-sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.bg-pick input { width: 40px; height: 32px; padding: 2px; }
+.bg-row2 { gap: 6px; }
+.bg-row2 .btn { flex: 1; padding: 0 6px; }
+#save { height: 42px; }
+.bg-note { margin: 0; line-height: 1.5; padding: 10px 12px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); }
+.bg-note b { color: var(--text-2); }
